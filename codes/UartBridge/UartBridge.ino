@@ -58,41 +58,45 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            overflow: hidden;
             background-image: radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
                               radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
         }
 
         .container {
             width: 100%;
-            max-width: 1100px;
+            max-width: 1200px;
+            height: 90vh;
+            max-height: 850px;
             background: var(--card-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-radius: 24px;
             border: 1px solid var(--border-color);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
-            display: grid;
-            grid-template-rows: auto 1fr auto;
         }
 
         /* Header */
         .header {
-            padding: 24px 32px;
+            padding: 20px 32px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
         }
 
         .title-area h1 {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 700;
             letter-spacing: -0.02em;
             background: linear-gradient(to right, #a78bfa, #34d399);
@@ -101,9 +105,9 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
         }
 
         .title-area p {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
-            margin-top: 4px;
+            margin-top: 2px;
             font-weight: 500;
         }
 
@@ -117,6 +121,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-color);
             border-radius: 100px;
+            flex-shrink: 0;
         }
 
         .status-dot {
@@ -133,27 +138,35 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             box-shadow: 0 0 12px var(--accent-green);
         }
 
-        /* Main Workspace */
+        /* Workspace Grid */
         .workspace {
             display: grid;
-            grid-template-columns: 350px 1fr;
-            height: 600px;
+            grid-template-columns: 320px 1fr;
+            flex-grow: 1;
+            min-height: 0; /* Critical for inner scrolling */
         }
 
         @media (max-width: 900px) {
+            body {
+                height: auto;
+                overflow: auto;
+            }
+            .container {
+                height: auto;
+                max-height: none;
+            }
             .workspace {
                 grid-template-columns: 1fr;
-                height: auto;
             }
         }
 
         /* Sidebar Controls */
         .sidebar {
-            padding: 32px;
+            padding: 24px;
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            gap: 28px;
+            gap: 20px;
             overflow-y: auto;
             background: rgba(0, 0, 0, 0.08);
         }
@@ -161,11 +174,11 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .control-group label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -177,10 +190,10 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             background: var(--input-bg);
             border: 1px solid var(--border-color);
             color: var(--text-color);
-            padding: 12px 14px;
-            border-radius: 12px;
+            padding: 10px 12px;
+            border-radius: 10px;
             outline: none;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: all 0.2s;
         }
 
@@ -193,10 +206,10 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             background: var(--primary);
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -228,13 +241,13 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
         .pinout-box {
             background: rgba(15, 23, 42, 0.4);
             border: 1px dashed var(--border-color);
-            border-radius: 12px;
-            padding: 14px;
+            border-radius: 10px;
+            padding: 12px;
             display: flex;
             justify-content: space-around;
             align-items: center;
             font-family: 'Fira Code', monospace;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         .pin-val {
@@ -242,46 +255,51 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             color: var(--primary);
         }
 
-        /* Console */
+        /* Console Area */
         .console-area {
-            padding: 32px;
+            padding: 24px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            height: 100%;
+            gap: 16px;
+            min-height: 0; /* Keep it inside container bounds */
         }
 
         .terminal-container {
             flex-grow: 1;
+            min-height: 0; /* Critical: tells flexbox child it can shrink and scroll */
             position: relative;
-            min-height: 0;
+            background-color: var(--terminal-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .terminal {
             width: 100%;
             height: 100%;
-            background-color: var(--terminal-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 20px;
-            overflow-y: auto;
+            padding: 16px;
+            overflow-y: scroll; /* Dedicated scrolling box */
             font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             line-height: 1.6;
             color: var(--accent-green);
             white-space: pre-wrap;
             box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.6);
+            flex-grow: 1;
         }
 
         /* Command bar */
         .cmd-bar {
             display: flex;
-            gap: 12px;
+            gap: 10px;
+            flex-shrink: 0;
         }
 
         /* Footer */
         .footer {
-            padding: 16px 32px;
+            padding: 14px 32px;
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
@@ -289,6 +307,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             color: var(--text-muted);
             font-weight: 500;
             background: rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
         }
     </style>
 </head>
@@ -347,6 +366,12 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
                     </div>
                     <button class="btn btn-secondary" onclick="swapPins()">Swap TX / RX</button>
                 </div>
+
+                <!-- Maintenance Tools -->
+                <div class="control-group" style="margin-top: auto;">
+                    <label>Maintenance Tools</label>
+                    <button class="btn btn-secondary" style="width: 100%;" onclick="downloadLogs()">Dump Captured Logs</button>
+                </div>
             </div>
 
             <!-- Terminal Console -->
@@ -390,6 +415,11 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             span.textContent = text;
             terminalLog.appendChild(span);
             terminalLog.scrollTop = terminalLog.scrollHeight;
+            
+            // Memory safeguard: keep DOM size sane during long debug logs
+            if (terminalLog.childNodes.length > 3000) {
+                terminalLog.removeChild(terminalLog.firstChild);
+            }
         }
 
         function clearLogs() {
@@ -503,6 +533,19 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
             } else {
                 alert("Please enter SSID!");
             }
+        }
+
+        function downloadLogs() {
+            const text = terminalLog.innerText;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const anchor = document.createElement('a');
+            anchor.download = 'uart_capture_logs.txt';
+            anchor.href = window.URL.createObjectURL(blob);
+            anchor.target = '_blank';
+            anchor.style.display = 'none';
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
         }
 
         connectWs();
